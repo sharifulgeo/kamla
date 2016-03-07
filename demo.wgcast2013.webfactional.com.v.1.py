@@ -22,7 +22,7 @@ driver.maximize_window()
 class accessManagement:
     def __init__(self, drver):
         self.drver = driver
-        
+
     def register(self, url):
         self.drver.get(url)
         try:
@@ -62,11 +62,11 @@ class accessManagement:
         passwrd.append(pas)
         emailaddress.append(eml)
         return 0
-    
+
     def registerWithFacebook(self, url):
         self.drver.get(url)
         return 0
-    
+
     def logout(self, url_parameter):
         self.drver.get(url_parameter+'logout')
         try:
@@ -75,19 +75,48 @@ class accessManagement:
             raise Exception('Error logging out')
         return 0
 
-    def login(self, user_name, pass_word):
-        url_paramtr = 'http://'+user_name+':'+pass_word+'@wgcast2013.webfactional.com/'
-        self.drver.get(url_paramtr)
+    def email_login(self, user_name, pass_word):
+        #url_paramtr = 'http://'+user_name+':'+pass_word+'@wgcast2013.webfactional.com/'
+        self.drver.get(url_)
         try:
-            WebDriverWait(self.drver, 50).until(EC.presence_of_element_located((By.XPATH, "//a[contains(text(),'Sign Up')]")))
+            WebDriverWait(self.drver, 50).until(EC.presence_of_element_located((By.XPATH, "//li/a[contains(text(),'Sign In')]")))
         except:
-            raise Exception('Error logging out')
+            raise Exception('Error logging In Page')
+        self.drver.find_element_by_xpath("//li/a[contains(text(),'Sign In')]").click()
+        try:
+            self.drver.find_element_by_xpath("//a[@class = 'cc_btn cc_btn_accept_all']").click()
+        except:
+            pass
+        try:
+            WebDriverWait(self.drver, 50).until(EC.presence_of_element_located((By.XPATH, "//h2[contains(text(),'Login using email and password')]")))
+        except:
+            raise Exception('Error in Getting Login Form')
+        self.drver.find_element_by_xpath("//input[@name = 'email']").send_keys(user_name)
+        self.drver.find_element_by_xpath("//input[@name = 'password']").send_keys(pass_word)
+        self.drver.find_element_by_xpath("//button[contains(text(),'Login')]").click()
+        try:
+            WebDriverWait(self.drver, 50).until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Account')]")))
+        except:
+            raise Exception('Error getting logged in')
         return 0
-    def citySearch(self):
+
+    def faceboo_Login():
         pass
 
+    def citySearch(self, city_name):
+        self.drver.find_element_by_xpath("//input[contains(@placeholder,'Enter a location')]").send_keys(city_name)
+        time.sleep(2)
+        self.drver.find_element_by_xpath("//input[contains(@placeholder,'Enter a location')]").send_keys(Keys.DOWN)
+        time.sleep(2)
+        self.drver.find_element_by_xpath("//input[contains(@placeholder,'Enter a location')]").send_keys(Keys.ENTER)
+        try:
+            WebDriverWait(self.drver, 50).until(EC.presence_of_element_located((By.XPATH, "//h1[contains(text(),'Room offers in Berlin')]")))
+        except:
+            raise Exception('Error in Searching city')
+        return 0
+
 class createOffer:
-    def __init__(self,drver):
+    def __init__(self, drver):
         self.drver = driver
 
     def createMyoffer(self):
@@ -150,7 +179,7 @@ class createOffer:
         except:
             raise Exception('Error Filling Description Information')
         return 0
-    
+
     def fillDescription(self, description_title, location_description_label, flat_description):
         self.drver.find_element_by_xpath("//div[@class = 'form-group form-group-depth-1']//input[@name='title']").send_keys(description_title)
         self.drver.find_element_by_xpath("//div[@class = 'tab-content']//textarea[@name='description_location']").send_keys(location_description_label)
@@ -168,7 +197,7 @@ class createOffer:
         except:
             raise Exception('Error Filling Description Information')
         return 0
-    
+
     def fillLookingfor(self, question_1, question_2, question_3):
         self.drver.find_element_by_xpath("//input[@label='Question 1']").send_keys(question_1)
         self.drver.find_element_by_xpath("//input[@label='Question 2']").send_keys(question_2)
@@ -179,9 +208,9 @@ class createOffer:
         except:
             raise Exception('Error Filling Looking For Information')
         return 0
+    
     def uploadImage(self, image_path):
         self.drver.find_element_by_xpath("//input[@type = 'file']").send_keys(image_path)
-        #http://api.wgcast2013.webfactional.com/media/offers/2016/3/7/cl4die_430a3d7d456e4cd1bc2f642c632cfc30.jpg
         try:
             WebDriverWait(self.drver, 50).until(EC.presence_of_element_located((By.XPATH, "//a[@class='fancybox-thumb thumbnail']")))
         except:
@@ -197,9 +226,11 @@ for i in range(100):
     print i
     wrker = accessManagement(driver)
     offer = createOffer(driver)
-    wrker.register(url_)
+    #wrker.register(url_)
+    wrker.email_login('msi_g@yahoo.com', '301331')
+    wrker.citySearch('Berlin, Deutschland')
     offer.createMyoffer()
-    offer.fillAddress("Europaplatz 1, Berlin, Mitte, 10557 ","Mitte","2")
+    offer.fillAddress("Europaplatz 1, Berlin, Mitte, 10557 ", "Mitte", "2")
     offer.fillTheroom(11, 2345, 25, 2340)
     offer.fillTheflat(13, 1234, 2, 12, 20)
     offer.fillDescription("Test Title", "Location Description", "Flat Description")
@@ -208,5 +239,3 @@ for i in range(100):
     offer.uploadImage("C:\\Users\\Winrock\\Desktop\\SCRPROJ\\SleniumTesting\\1.jpg")
     wrker.logout(url_)
 driver.quit()
-
-
