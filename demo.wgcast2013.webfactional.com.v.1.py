@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time, random, string
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
@@ -133,6 +134,10 @@ class createOffer:
         return 0
 
     def fillAddress(self, address, district, floor):
+        try:
+            address.decode('utf-8')
+        except:
+            pass       
         self.drver.find_element_by_xpath("//input[@placeholder = 'Address']").send_keys(address)
         time.sleep(2)
         self.drver.find_element_by_xpath("//input[@placeholder = 'Address']").send_keys(Keys.DOWN)
@@ -172,7 +177,6 @@ class createOffer:
         self.drver.find_element_by_xpath("//span[contains(text(),'Free until')]/ancestor::label/following-sibling::input[1]").click()
         self.drver.find_element_by_xpath("//table[@class = 'ui-datepicker-calendar']//td/a[contains(text(),'{0}')]".format(to_dateFlat)).click()
         self.drver.find_element_by_xpath("//input[@name = 'rent']").send_keys(flat_rent)
-        #self.drver.find_element_by_xpath("//button[@id = 'viewOffersBtn']").click()
         self.drver.find_element_by_xpath("//button[contains(text(), 'Next Step')]").click()
         try:
             WebDriverWait(self.drver, 50).until(EC.presence_of_element_located((By.XPATH, "//label[contains(text(),'Offer title')]")))
@@ -227,15 +231,15 @@ for i in range(100):
     wrker = accessManagement(driver)
     offer = createOffer(driver)
     #wrker.register(url_)
-    wrker.email_login('msi_g@yahoo.com', '301331')
-    wrker.citySearch('Berlin, Deutschland')
+    wrker.email_login('testuser@yahoo.com', '1234')
+    #wrker.citySearch('Berlin, Deutschland')
     offer.createMyoffer()
     offer.fillAddress("Europaplatz 1, Berlin, Mitte, 10557 ", "Mitte", "2")
     offer.fillTheroom(11, 2345, 25, 2340)
     offer.fillTheflat(13, 1234, 2, 12, 20)
-    offer.fillDescription("Test Title", "Location Description", "Flat Description")
+    offer.fillDescription("Another Test Title", "Location Description", "Flat Description")
     offer.filHighlights("highlight_1", "highlight_2", "highlight_3")
     offer.fillLookingfor('question_1', 'question_2', 'question_3')
-    offer.uploadImage("C:\\Users\\Winrock\\Desktop\\SCRPROJ\\SleniumTesting\\1.jpg")
+    offer.uploadImage("C:\\Users\\Winrock\\Desktop\\SCRPROJ\\SleniumTesting\\2.jpg")
     wrker.logout(url_)
 driver.quit()
